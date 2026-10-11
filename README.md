@@ -34,3 +34,19 @@ $ newman -v
 | 8 | Байхгүй оюутан + байхгүй хичээл | 200 | ERROR_NO_STUDENT |
 | 9 | Урьдачгүй хичээл, хоосон coursesTaken | 201 | OK |
 | 10 | `courseID` талбар дутуу | 400 | ERROR_BAD_REQUEST |
+
+## Newman ажиллуулалтууд (Даалгавар 4)
+
+| Ажиллуулалт | Файл | assertions executed | failed | exit code |
+|---|---|---|---|---|
+| PASS | results/newman-pass.txt | 24 | 0 | 0 |
+| FAIL | results/newman-fail.txt | 24 | 1 | 1 |
+| DOWN | results/newman-down.txt | - | - | 1 |
+
+Collection-д 10 бие даасан тест, 24 assertion байна.
+
+ECONNREFUSED нь интерфейсийн (холболтын) алдаа: server ажиллаагүй тул хариу ирээгүй, oracle шалгагдаагүй. Харин FAIL ажиллуулалтад server хариу өгсөн боловч хүлээсэн 200 нь бодит 201-тэй таарсангүй, энэ нь oracle-ийн алдаа.
+
+## Дүгнэлт
+
+(8-10 өгүүлбэр, өөрөө бич)
