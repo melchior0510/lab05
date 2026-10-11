@@ -1,0 +1,129 @@
+newman
+
+Lab05
+
+❏ 1. Happy path: идэвхтэй оюутан, урьдач хангасан → 201 OK
+↳ setup оюутан
+  PUT http://localhost:3000/students/S_T1 [200 OK, 178B, 32ms]
+
+↳ setup хичээл
+  PUT http://localhost:3000/courses/C_T1 [200 OK, 178B, 8ms]
+
+↳ POST /registrations
+  POST http://localhost:3000/registrations [201 Created, 202B, 5ms]
+  ✓  Happy path бүртгэл - статус 201
+  ✓  Happy path бүртгэл - result=OK
+  ✓  registrationID тоо байна
+
+❏ 2. Оюутан байхгүй → ERROR_NO_STUDENT
+↳ setup хичээл
+  PUT http://localhost:3000/courses/C_T2 [200 OK, 178B, 4ms]
+
+↳ POST /registrations
+  POST http://localhost:3000/registrations [200 OK, 192B, 7ms]
+  ✓  Байхгүй оюутан - статус 200
+  ✓  Байхгүй оюутан - result=ERROR_NO_STUDENT
+
+❏ 3. Идэвхгүй оюутан → ERROR_INACTIVE_STUDENT
+↳ setup оюутан
+  PUT http://localhost:3000/students/S_T3 [200 OK, 178B, 5ms]
+
+↳ setup хичээл
+  PUT http://localhost:3000/courses/C_T3 [200 OK, 178B, 4ms]
+
+↳ POST /registrations
+  POST http://localhost:3000/registrations [200 OK, 198B, 2ms]
+  ✓  Идэвхгүй оюутан бүртгүүлэхэд ERROR_INACTIVE_STUDENT - статус 200
+  ✓  Идэвхгүй оюутан бүртгүүлэхэд ERROR_INACTIVE_STUDENT - result=ERROR_INACTIVE_STUDENT
+
+❏ 4. Хичээл байхгүй → ERROR_NO_COURSE
+↳ setup оюутан
+  PUT http://localhost:3000/students/S_T4 [200 OK, 178B, 6ms]
+
+↳ POST /registrations
+  POST http://localhost:3000/registrations [200 OK, 191B, 9ms]
+  ✓  Байхгүй хичээл - статус 200
+  ✓  Байхгүй хичээл - result=ERROR_NO_COURSE
+
+❏ 5. Урьдач огт үзээгүй → ERROR_PREREQUISITES
+↳ setup оюутан
+  PUT http://localhost:3000/students/S_T5 [200 OK, 178B, 4ms]
+
+↳ setup хичээл
+  PUT http://localhost:3000/courses/C_T5 [200 OK, 178B, 4ms]
+
+↳ POST /registrations
+  POST http://localhost:3000/registrations [200 OK, 215B, 2ms]
+  ✓  Урьдач огт үзээгүй - статус 200
+  ✓  Урьдач огт үзээгүй - result=ERROR_PREREQUISITES
+  ✓  missing=["CS201"]
+
+❏ 6. Зарим урьдач дутуу → ERROR_PREREQUISITES
+↳ setup оюутан
+  PUT http://localhost:3000/students/S_T6 [200 OK, 178B, 3ms]
+
+↳ setup хичээл
+  PUT http://localhost:3000/courses/C_T6 [200 OK, 178B, 3ms]
+
+↳ POST /registrations
+  POST http://localhost:3000/registrations [200 OK, 215B, 4ms]
+  ✓  Зарим урьдач дутуу - статус 200
+  ✓  Зарим урьдач дутуу - result=ERROR_PREREQUISITES
+  ✓  missing=["CS202"]
+
+❏ 7. Давхар алдаа: идэвхгүй оюутан + байхгүй хичээл
+↳ setup оюутан
+  PUT http://localhost:3000/students/S_T7 [200 OK, 178B, 3ms]
+
+↳ POST /registrations
+  POST http://localhost:3000/registrations [200 OK, 198B, 3ms]
+  ✓  Идэвхгүй оюутан + байхгүй хичээл → оюутны алдаа эхэлж - статус 200
+  ✓  Идэвхгүй оюутан + байхгүй хичээл → оюутны алдаа эхэлж - result=ERROR_INACTIVE_STUDENT
+
+❏ 8. Давхар алдаа: байхгүй оюутан + байхгүй хичээл
+↳ POST /registrations
+  POST http://localhost:3000/registrations [200 OK, 192B, 2ms]
+  ✓  Байхгүй оюутан + байхгүй хичээл → ERROR_NO_STUDENT - статус 200
+  ✓  Байхгүй оюутан + байхгүй хичээл → ERROR_NO_STUDENT - result=ERROR_NO_STUDENT
+
+❏ 9. Хязгаар: урьдачгүй хичээл, хоосон coursesTaken → 201
+↳ setup оюутан
+  PUT http://localhost:3000/students/S_T9 [200 OK, 178B, 9ms]
+
+↳ setup хичээл
+  PUT http://localhost:3000/courses/C_T9 [200 OK, 178B, 5ms]
+
+↳ POST /registrations
+  POST http://localhost:3000/registrations [201 Created, 202B, 5ms]
+  ✓  Урьдачгүй хичээлд бүртгүүлэх - статус 201
+  ✓  Урьдачгүй хичээлд бүртгүүлэх - result=OK
+  ✓  registrationID тоо байна
+
+❏ 10. Хязгаар: courseID дутуу → 400 ERROR_BAD_REQUEST
+↳ setup оюутан
+  PUT http://localhost:3000/students/S_T10 [200 OK, 178B, 3ms]
+
+↳ POST /registrations
+  POST http://localhost:3000/registrations [400 Bad Request, 202B, 4ms]
+  ✓  courseID дутуу - статус 400
+  ✓  courseID дутуу - result=ERROR_BAD_REQUEST
+
+┌─────────────────────────┬─────────────────┬─────────────────┐
+│                         │        executed │          failed │
+├─────────────────────────┼─────────────────┼─────────────────┤
+│              iterations │               1 │               0 │
+├─────────────────────────┼─────────────────┼─────────────────┤
+│                requests │              24 │               0 │
+├─────────────────────────┼─────────────────┼─────────────────┤
+│            test-scripts │              10 │               0 │
+├─────────────────────────┼─────────────────┼─────────────────┤
+│      prerequest-scripts │               0 │               0 │
+├─────────────────────────┼─────────────────┼─────────────────┤
+│              assertions │              24 │               0 │
+├─────────────────────────┴─────────────────┴─────────────────┤
+│ total run duration: 687ms                                   │
+├─────────────────────────────────────────────────────────────┤
+│ total data received: 568B (approx)                          │
+├─────────────────────────────────────────────────────────────┤
+│ average response time: 5ms [min: 2ms, max: 32ms, s.d.: 5ms] │
+└─────────────────────────────────────────────────────────────┘
